@@ -12,16 +12,16 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.4.2.Final/mapstruct-processor-1.4.2.Final.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.4.2.Final/mapstruct-1.4.2.Final.jar" />
         </processorPath>
-        <module name="refrigerantapi" />
+        <module name="sodaapi" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="refrigerantapi" target="16" />
+      <module name="sodaapi" target="16" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="refrigerantapi" options="-parameters" />
+      <module name="sodaapi" options="-parameters" />
     </option>
   </component>
 </project>
