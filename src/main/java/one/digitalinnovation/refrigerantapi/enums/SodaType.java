@@ -7,9 +7,14 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum SodaType {
 
-    COKE("Coke"),
-    FRUIT("Fruit"),
-    GUARANA("Guarana");
+    CLUB("Club"),
+    COLA("Cola"),
+    GINGER_ALE("Ginger ale"),
+    GINGER_BEER("Ginger beer"),
+    LEMON_LINE("Lemon line"),
+    ROOT_BEER("Root beer"),
+    TONIC("Tonic"),
+    WATER("Water");
 
     private final String description;
 }
