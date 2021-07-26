@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/refrigerantapi.iml" filepath="$PROJECT_DIR$/refrigerantapi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sodaapi.iml" filepath="$PROJECT_DIR$/sodaapi.iml" />
     </modules>
   </component>
 </project>
