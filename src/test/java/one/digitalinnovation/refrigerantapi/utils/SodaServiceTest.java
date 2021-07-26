@@ -19,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,5 +48,15 @@ public class SodaServiceTest {
         assertThat(createdSodaDTO.getId(), is(equalTo(expectedSaveSodaDTO.getId())));
         assertThat(createdSodaDTO.getName(), is(equalTo(expectedSaveSodaDTO.getName())));
         assertThat(createdSodaDTO.getQuantity(), is(equalTo(expectedSaveSodaDTO.getQuantity())));
+    }
+
+    @Test
+    void whenAlreadyRegisteredSodaInformedThenAnExceptionShouldBeThrown(){
+        SodaDTO expectedSodaDTO = SodaDTOBuilder.builder().build().toSodaDTO();
+        Soda duplicatedSoda = sodaMapper.toModel(expectedSodaDTO);
+
+        when(sodaRepository.findByName(expectedSodaDTO.getName())).thenReturn(Optional.of(duplicatedSoda));
+
+        assertThrows(SodaAlreadyRegisteredException.class, () -> sodaService.createSoda(expectedSodaDTO));
     }
 }
