@@ -23,7 +23,7 @@ public class SodaDTOBuilder {
     private int quantity = 10;
 
     @Builder.Default
-    private SodaType type = SodaType.COLA;
+    private SodaType sodaType = SodaType.COLA;
 
     public SodaDTO toSodaDTO() {
         return new SodaDTO(id,
@@ -31,6 +31,6 @@ public class SodaDTOBuilder {
                 brand,
                 max,
                 quantity,
-                type);
+                sodaType);
     }
 }

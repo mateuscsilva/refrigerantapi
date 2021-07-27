@@ -35,9 +35,9 @@ public class SodaController {
     @GetMapping
     public List<SodaDTO> listSodas(){ return sodaService.listAlL(); }
 
-    @GetMapping("/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(Long id) throws SodaNotFoundException {
+    public void deleteById(@PathVariable Long id) throws SodaNotFoundException {
         sodaService.deleteById(id);
     }
 

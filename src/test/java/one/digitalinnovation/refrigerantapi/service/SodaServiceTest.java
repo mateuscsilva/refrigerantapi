@@ -1,9 +1,10 @@
-package one.digitalinnovation.refrigerantapi.utils;
+package one.digitalinnovation.refrigerantapi.service;
 
 import one.digitalinnovation.refrigerantapi.builder.SodaDTOBuilder;
 import one.digitalinnovation.refrigerantapi.dto.SodaDTO;
 import one.digitalinnovation.refrigerantapi.entity.Soda;
 import one.digitalinnovation.refrigerantapi.exception.SodaAlreadyRegisteredException;
+import one.digitalinnovation.refrigerantapi.exception.SodaNotFoundException;
 import one.digitalinnovation.refrigerantapi.mapper.SodaMapper;
 import one.digitalinnovation.refrigerantapi.repository.SodaRepository;
 import one.digitalinnovation.refrigerantapi.service.SodaService;
@@ -59,4 +60,19 @@ public class SodaServiceTest {
 
         assertThrows(SodaAlreadyRegisteredException.class, () -> sodaService.createSoda(expectedSodaDTO));
     }
+
+    @Test
+    void whenValidSodaNameIsGivenThenReturnABeer() throws SodaNotFoundException {
+        // given
+        SodaDTO expectedFoundSodaDTO = SodaDTOBuilder.builder().build().toSodaDTO();
+        Soda expectedFoundSoda = sodaMapper.toModel(expectedFoundSodaDTO);
+
+        // when
+        when(sodaRepository.findByName(expectedFoundSoda.getName())).thenReturn(Optional.of(expectedFoundSoda));
+
+        // then
+        SodaDTO foundSodaDTO = sodaService.findByName(expectedFoundSodaDTO.getName());
+        assertThat(foundSodaDTO, is(equalTo(expectedFoundSodaDTO)));
+    }
+
 }
