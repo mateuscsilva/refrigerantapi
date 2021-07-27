@@ -34,7 +34,7 @@ public class SodaController {
     }
 
     @GetMapping
-    public List<SodaDTO> listSodas(){ return sodaService.listAlL(); }
+    public List<SodaDTO> listAll(){ return sodaService.listAlL(); }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
