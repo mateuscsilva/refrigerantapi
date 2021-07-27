@@ -5,6 +5,7 @@ import one.digitalinnovation.refrigerantapi.dto.QuantityDTO;
 import one.digitalinnovation.refrigerantapi.dto.SodaDTO;
 import one.digitalinnovation.refrigerantapi.exception.SodaAlreadyRegisteredException;
 import one.digitalinnovation.refrigerantapi.exception.SodaNotFoundException;
+import one.digitalinnovation.refrigerantapi.exception.SodaStockExceededBottomLimitException;
 import one.digitalinnovation.refrigerantapi.exception.SodaStockExceededException;
 import one.digitalinnovation.refrigerantapi.service.SodaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,5 +48,9 @@ public class SodaController {
         return sodaService.increment(id, quantityDTO.getQuantity());
     }
 
-
+    @PatchMapping("/{id}/decrement")
+    public SodaDTO decrement(@PathVariable Long id, @RequestBody @Valid QuantityDTO quantityDTO) throws
+            SodaNotFoundException, SodaStockExceededBottomLimitException {
+        return sodaService.decrement(id, quantityDTO.getQuantity());
+    }
 }

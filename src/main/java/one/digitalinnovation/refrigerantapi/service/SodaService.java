@@ -5,6 +5,7 @@ import one.digitalinnovation.refrigerantapi.dto.SodaDTO;
 import one.digitalinnovation.refrigerantapi.entity.Soda;
 import one.digitalinnovation.refrigerantapi.exception.SodaAlreadyRegisteredException;
 import one.digitalinnovation.refrigerantapi.exception.SodaNotFoundException;
+import one.digitalinnovation.refrigerantapi.exception.SodaStockExceededBottomLimitException;
 import one.digitalinnovation.refrigerantapi.exception.SodaStockExceededException;
 import one.digitalinnovation.refrigerantapi.mapper.SodaMapper;
 import one.digitalinnovation.refrigerantapi.repository.SodaRepository;
@@ -59,6 +60,17 @@ public class SodaService {
         }
         throw new SodaStockExceededException(id, quantityToIncrement);
 
+    }
+
+    public SodaDTO decrement(Long id, Integer quantityToDecrement) throws SodaNotFoundException, SodaStockExceededBottomLimitException {
+        Soda savedSoda = verifyIfExists(id);
+        int quantityAfterDecrement = savedSoda.getQuantity() - quantityToDecrement;
+        if(quantityAfterDecrement >= 0 && quantityToDecrement >= 0){
+            savedSoda.setQuantity(quantityAfterDecrement);
+            Soda sodaDecrementedStock = sodaRepository.save(savedSoda);
+            return sodaMapper.toDTO(sodaDecrementedStock);
+        }
+        throw new SodaStockExceededBottomLimitException(id, quantityToDecrement);
     }
 
     private void verifyIfIsAlreadyRegistered(String name) throws SodaAlreadyRegisteredException {

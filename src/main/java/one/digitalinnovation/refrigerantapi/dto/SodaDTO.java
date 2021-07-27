@@ -9,6 +9,7 @@ import one.digitalinnovation.refrigerantapi.enums.SodaType;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -30,10 +31,12 @@ public class SodaDTO {
 
     @NotNull
     @Max(value = 500)
+    @Min(0)
     private int max;
 
     @NotNull
     @Max(value = 100)
+    @Min(0)
     private int quantity;
 
     @Enumerated(EnumType.STRING)

@@ -6,7 +6,7 @@ import one.digitalinnovation.refrigerantapi.entity.Soda;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-07-26T16:52:10-0300",
+    date = "2021-07-27T16:47:04-0300",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 16 (Oracle Corporation)"
 )
 public class SodaMapperImpl implements SodaMapper {
