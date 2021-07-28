@@ -73,6 +73,17 @@ public class SodaService {
         throw new SodaStockExceededBottomLimitException(id, quantityToDecrement);
     }
 
+    public SodaDTO emptyStockByName(String name) throws SodaNotFoundException {
+        Optional<Soda> savedSoda = sodaRepository.findByName(name);
+        if(savedSoda.isPresent()){
+            Soda emptySodaQuantity = savedSoda.get();
+            emptySodaQuantity.setQuantity(0);
+            Soda afterEmptySoda = sodaRepository.save(emptySodaQuantity);
+            return sodaMapper.toDTO(afterEmptySoda);
+        }
+        throw new SodaNotFoundException(name);
+    }
+
     private void verifyIfIsAlreadyRegistered(String name) throws SodaAlreadyRegisteredException {
         Optional<Soda> optSavedSoda = sodaRepository.findByName(name);
         if(optSavedSoda.isPresent()){

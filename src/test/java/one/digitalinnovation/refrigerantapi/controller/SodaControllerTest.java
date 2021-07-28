@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.web.JsonPath;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,10 +34,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class SodaControllerTest {
 
     private static final String SODA_API_URL_PATH = "/api/v1/sodas";
+    private static final String INVALID_SODA_NAME = "@";
     private static final long VALID_SODA_ID = 1L;
     private static final long INVALID_SODA_ID = 2L;
     private static final String SODA_API_SUBPATH_INCREMENT_URL = "/increment";
     private static final String SODA_API_SUBPATH_DECREMENT_URL = "/decrement";
+    private static final String SODA_API_SUBPATH_EMPTY_URL = "/empty";
 
     private MockMvc mockMvc;
 
@@ -74,11 +77,9 @@ public class SodaControllerTest {
 
     @Test
     void whenPOSTIsCalledWithoutRequiredFieldThenAnErrorIsReturned() throws Exception {
-        // given
         SodaDTO sodaDTO = SodaDTOBuilder.builder().build().toSodaDTO();
         sodaDTO.setBrand(null);
 
-        // then
         mockMvc.perform(post(SODA_API_URL_PATH)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(sodaDTO)))
@@ -87,13 +88,10 @@ public class SodaControllerTest {
 
     @Test
     void whenGETIsCalledWithValidNameThenOkStatusIsReturned() throws Exception {
-        // given
         SodaDTO sodaDTO = SodaDTOBuilder.builder().build().toSodaDTO();
 
-        //when
         when(sodaService.findByName(sodaDTO.getName())).thenReturn(sodaDTO);
 
-        // then
         mockMvc.perform(MockMvcRequestBuilders.get(SODA_API_URL_PATH + "/" + sodaDTO.getName())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -152,10 +150,8 @@ public class SodaControllerTest {
 
     @Test
     void whenDELETEIsCalledWithInvalidIdThenNotFoundStatusIsReturned() throws Exception {
-        //when
         doThrow(SodaNotFoundException.class).when(sodaService).deleteById(INVALID_SODA_ID);
 
-        // then
         mockMvc.perform(MockMvcRequestBuilders.delete(SODA_API_URL_PATH + "/" + INVALID_SODA_ID)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -198,8 +194,8 @@ public class SodaControllerTest {
                 .content(asJsonString(quantityDTO)))
                 .andExpect(status().isBadRequest());
 
-        }
-    ////////////////////////////////////////////////////
+    }
+
     @Test
     void whenPATCHIsCalledWithInvalidBeerIdToIncrementThenNotFoundStatusIsReturned() throws Exception {
         QuantityDTO quantityDTO = QuantityDTO.builder()
@@ -252,7 +248,7 @@ public class SodaControllerTest {
     }
 
     @Test
-    void whenPATCHIsCalledWithInvalidBeerIdToDecrementThenNotFoundStatusIsReturned() throws Exception {
+    void whenPATCHIsCalledWithInvalidSodaIdToDecrementThenNotFoundStatusIsReturned() throws Exception {
         QuantityDTO quantityDTO = QuantityDTO.builder()
                 .quantity(5)
                 .build();
@@ -263,5 +259,32 @@ public class SodaControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(quantityDTO)))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void whenPATCHIsCalledWithInvalidSodaNameToEmptyThenNotFoundStatusIsReturned() throws Exception {
+        when(sodaService.emptyStockByName(INVALID_SODA_NAME)).thenThrow(SodaNotFoundException.class);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch(SODA_API_URL_PATH + "/"
+                + INVALID_SODA_NAME + SODA_API_SUBPATH_EMPTY_URL)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void whenPATCHIsCalledWithValidSodaNameToEmptyThenOkStatusIsReturned() throws Exception {
+        SodaDTO expectedSodaDTO = SodaDTOBuilder.builder().build().toSodaDTO();
+        expectedSodaDTO.setQuantity(0);
+
+        when(sodaService.emptyStockByName(expectedSodaDTO.getName())).thenReturn(expectedSodaDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch(SODA_API_URL_PATH + "/"
+                + expectedSodaDTO.getName() + SODA_API_SUBPATH_EMPTY_URL)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is(expectedSodaDTO.getName())))
+                .andExpect(jsonPath("$.brand", is(expectedSodaDTO.getBrand())))
+                .andExpect(jsonPath("$.sodaType", is(expectedSodaDTO.getSodaType().toString())))
+                .andExpect(jsonPath("$.quantity", is(expectedSodaDTO.getQuantity())));
     }
 }

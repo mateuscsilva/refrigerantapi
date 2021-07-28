@@ -21,7 +21,6 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -65,7 +64,6 @@ public class SodaServiceTest {
 
     @Test
     void whenValidSodaNameIsGivenThenReturnASoda() throws SodaNotFoundException {
-        // given
         SodaDTO expectedFoundSodaDTO = SodaDTOBuilder.builder().build().toSodaDTO();
         Soda expectedFoundSoda = sodaMapper.toModel(expectedFoundSodaDTO);
 
@@ -108,15 +106,12 @@ public class SodaServiceTest {
 
     @Test
     void whenExclusionIsCalledWithValidIdThenASodaShouldBeDeleted() throws SodaNotFoundException{
-        // given
         SodaDTO expectedDeletedBeerDTO = SodaDTOBuilder.builder().build().toSodaDTO();
         Soda expectedDeletedBeer = sodaMapper.toModel(expectedDeletedBeerDTO);
 
-        // when
         when(sodaRepository.findById(expectedDeletedBeerDTO.getId())).thenReturn(Optional.of(expectedDeletedBeer));
         doNothing().when(sodaRepository).deleteById(expectedDeletedBeerDTO.getId());
 
-        // then
         sodaService.deleteById(expectedDeletedBeerDTO.getId());
 
         verify(sodaRepository, times(1)).findById(expectedDeletedBeerDTO.getId());
@@ -125,18 +120,15 @@ public class SodaServiceTest {
 
     @Test
     void whenIncrementIsCalledThenIncrementSodaStock() throws SodaNotFoundException, SodaStockExceededException {
-        //given
         SodaDTO expectedSodaDTO = SodaDTOBuilder.builder().build().toSodaDTO();
         Soda expectedSoda = sodaMapper.toModel(expectedSodaDTO);
 
-        //when
         when(sodaRepository.findById(expectedSodaDTO.getId())).thenReturn(Optional.of(expectedSoda));
         when(sodaRepository.save(expectedSoda)).thenReturn(expectedSoda);
 
         int quantityToIncrement = 10;
         int expectedQuantityAfterIncrement = expectedSodaDTO.getQuantity() + quantityToIncrement;
 
-        // then
         SodaDTO incrementedSodarDTO = sodaService.increment(expectedSodaDTO.getId(), quantityToIncrement);
 
         assertThat(expectedQuantityAfterIncrement, equalTo(incrementedSodarDTO.getQuantity()));
@@ -232,4 +224,27 @@ public class SodaServiceTest {
         assertThrows(SodaNotFoundException.class, () -> sodaService.decrement(INVALID_SODA_ID, quantityToDecrement));
     }
 
+
+    @Test
+    void whenEmptyIsCalledWithInvalidName() throws SodaNotFoundException {
+        SodaDTO expectedFoundSodaDTO = SodaDTOBuilder.builder().build().toSodaDTO();
+
+        when(sodaRepository.findByName(expectedFoundSodaDTO.getName())).thenReturn(Optional.empty());
+
+        assertThrows(SodaNotFoundException.class, () -> sodaService.emptyStockByName(expectedFoundSodaDTO.getName()));
+    }
+
+    @Test
+    void whenEmptyIsCalledWithValidName() throws SodaNotFoundException {
+        SodaDTO expectEmptySodaDTO = SodaDTOBuilder.builder().build().toSodaDTO();
+        Soda expectEmptySoda = sodaMapper.toModel(expectEmptySodaDTO);
+
+        when(sodaRepository.findByName(expectEmptySodaDTO.getName())).thenReturn(Optional.of(expectEmptySoda));
+        when(sodaRepository.save(expectEmptySoda)).thenReturn(expectEmptySoda);
+
+        int expectedQuantityAfterEmptyStock = 0;
+        SodaDTO emptySodaDTO = sodaService.emptyStockByName(expectEmptySoda.getName());
+
+        assertThat(expectedQuantityAfterEmptyStock, equalTo(emptySodaDTO.getQuantity()));
+    }
 }

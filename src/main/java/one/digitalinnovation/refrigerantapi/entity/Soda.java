@@ -33,4 +33,6 @@ public class Soda {
     @Column(nullable = false)
     private SodaType sodaType;
 
+
+
 }

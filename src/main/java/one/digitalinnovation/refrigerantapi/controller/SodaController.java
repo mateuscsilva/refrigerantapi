@@ -53,4 +53,9 @@ public class SodaController {
             SodaNotFoundException, SodaStockExceededBottomLimitException {
         return sodaService.decrement(id, quantityDTO.getQuantity());
     }
+
+    @PatchMapping("/{name}/empty")
+    public SodaDTO emptyStockByName(@PathVariable String name) throws SodaNotFoundException {
+        return sodaService.emptyStockByName(name);
+    }
 }
